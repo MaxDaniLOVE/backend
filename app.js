@@ -5,7 +5,7 @@ const placesRoutes = require('./router/place-routes');
 
 const app = express();
 
-app.use(placesRoutes);
+app.use('/api/places', placesRoutes);
 
 app.listen(5000, () => {
   console.log('http://localhost:5000/')
