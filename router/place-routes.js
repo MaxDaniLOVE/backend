@@ -10,7 +10,7 @@ router.delete('/:pid', placesControlers.deletePlace);
 
 router.patch('/:pid', placesControlers.updatePlace);
 
-router.get('/user/:uid', placesControlers.getPlaceByUserId);
+router.get('/user/:uid', placesControlers.getPlacesByUserId);
 
 router.post('/', placesControlers.createPlace);
 
