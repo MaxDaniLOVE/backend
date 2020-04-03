@@ -53,7 +53,7 @@ const getPlacesByUserId = (req, res, next) => {
 
 const createPlace = (req, res, next) => {
   const errors = validationResult(req);
-  if (errors.isEmpty) {
+  if (!errors.isEmpty()) {
     throw new HttpError('Invalids inputs passed', 422)
   }
   const { title, description, coordinates, address, creator } = req.body
@@ -70,6 +70,12 @@ const createPlace = (req, res, next) => {
 }
 
 const updatePlace = (req, res, next) => {
+  const errors = validationResult(req);
+ 
+  if (!errors.isEmpty()) {
+    console.log(errors.isEmpty)
+    throw new HttpError('Invalids inputs passed', 422)
+  }
   const placeId = req.params.pid; // { pid: 'p1' }
   const { title, description } = req.body;
   const updatePlace = { ...DUMMY_PLACES.find(({id}) => id === placeId) };

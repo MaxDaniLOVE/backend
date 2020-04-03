@@ -9,7 +9,12 @@ router.get('/:pid', placesControlers.getPlaceById);
 
 router.delete('/:pid', placesControlers.deletePlace);
 
-router.patch('/:pid', placesControlers.updatePlace);
+router.patch('/:pid', [
+  check('title')
+    .not()
+    .isEmpty(),
+  check('description').isLength({min: 5})
+] , placesControlers.updatePlace);
 
 router.get('/user/:uid', placesControlers.getPlacesByUserId);
 
