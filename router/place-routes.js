@@ -1,4 +1,5 @@
 const express = require('express');
+const { check } = require('express-validator')
 
 const placesControlers = require('../controlers/places-controlers')
 
@@ -12,6 +13,14 @@ router.patch('/:pid', placesControlers.updatePlace);
 
 router.get('/user/:uid', placesControlers.getPlacesByUserId);
 
-router.post('/', placesControlers.createPlace);
+router.post('/', [
+  check('title')
+    .not()
+    .isEmpty(),
+  check('description').isLength({min: 5}),
+  check('address')
+    .not()
+    .isEmpty(),
+] , placesControlers.createPlace);
 
 module.exports = router;
