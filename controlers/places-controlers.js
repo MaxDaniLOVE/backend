@@ -1,12 +1,13 @@
 const uuid = require('uuid/v4');
 const HttpError = require('../models/http-error');
+const getCoordsForAddress = require('../util/location')
 const { validationResult } = require('express-validator');
 
 let  DUMMY_PLACES = [
   {
     id: 'p1',
     title: 'Озеро Нарочь',
-    description: ':)',
+    description: ':))))',
     location: {
       lat: 54.8560698,
       lng: 26.629201
@@ -17,7 +18,7 @@ let  DUMMY_PLACES = [
   {
     id: 'p2',
     title: 'Maksim Bahdanovič Museum',
-    description: ':)',
+    description: ':))))',
     location: {
       lat: 53.9079756,
       lng: 27.5557012
@@ -51,17 +52,25 @@ const getPlacesByUserId = (req, res, next) => {
   res.json({place});
 }
 
-const createPlace = (req, res, next) => {
+const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError('Invalids inputs passed', 422)
+    return next(new HttpError('Invalids inputs passed', 422));
   }
-  const { title, description, coordinates, address, creator } = req.body
+  const { title, description, address, creator } = req.body;
+  let location;
+
+  try { // serever will be stopped if not use try/catch
+    location = await getCoordsForAddress(address);
+  } catch (error) {
+    return next(error); // ! NEXT
+  } 
+  
   const createdPlace = {
     id: uuid(),
     title,
     description,
-    location: coordinates,
+    location,
     address,
     creator
   }
