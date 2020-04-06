@@ -2,6 +2,7 @@ const uuid = require('uuid/v4');
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location')
 const { validationResult } = require('express-validator');
+const Place = require('../models/places');
 
 let  DUMMY_PLACES = [
   {
@@ -66,15 +67,22 @@ const createPlace = async (req, res, next) => {
     return next(error); // ! NEXT
   } 
   
-  const createdPlace = {
-    id: uuid(),
+  const createdPlace =  new Place({
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Official_portrait_of_Barack_Obama.jpg/274px-Official_portrait_of_Barack_Obama.jpg',
     title,
     description,
     location,
     address,
     creator
+  })
+  try {
+    await createdPlace.save()
+  } catch (err) {
+    const error = new HttpError('Creating failed', 500);
+    return next(error);
   }
-  DUMMY_PLACES.push(createdPlace);
+  
+
   res.status(201).json({place: createdPlace})
 }
 
