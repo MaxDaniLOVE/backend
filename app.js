@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const HttpError = require('./models/http-error')
 
 const placesRoutes = require('./router/place-routes');
@@ -23,6 +24,16 @@ app.use((err, req, res, next) => {
   res.json({message: err.message || 'An unknown error'})
 })
 
-app.listen(5000, () => {
-  console.log('http://localhost:5000/')
-})
+const url = 'mongodb+srv://maks_danilau:134679258@cluster0-wvi2c.mongodb.net/places?retryWrites=true&w=majority';
+
+mongoose
+  .connect(url)
+  .then(() => {
+    app.listen(5000, () => {
+      console.log('http://localhost:5000/')
+    })
+  })
+  .catch(err => {
+    console.log(err)
+  })
+
