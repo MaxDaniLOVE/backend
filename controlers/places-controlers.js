@@ -29,21 +29,27 @@ let  DUMMY_PLACES = [
   },
 ]
 
-const getPlaceById = (req, res, next) => {
+const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid; // { pid: 'p1' }
-  console.log('GET request of place with id ' + placeId);
-  const place = DUMMY_PLACES.find(({id}) => id === placeId);
-
-  if (!place) {
-    throw new HttpError('Couldn\'t find provided id', 404);
+  let place;
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    const error = new HttpError('Couldn\'t find provided id', 500);
+    return next(error);
   }
 
-  res.json({place});
+  if (!place) {
+    const error = new HttpError('Couldn\'t find provided id', 404);
+    return next(error);
+  }
+
+  res.json({ place: place.toObject({ getters: true }) });  // ! GETTERS
 }
 
 const getPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid; // { uid: 'u1' }
-  console.log('GET request of user with id ' + userId);
+
   const place = DUMMY_PLACES.filter(({creator}) => creator === userId);
 
   if (!place || !place.length) {
